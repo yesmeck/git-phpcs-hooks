@@ -23,10 +23,10 @@ do
             fi
 
             if [[ $(echo $file | grep -e '.js') ]]; then
-                STANDARD='Squiz'
+                STANDARD='Closure_Linter'
             fi
 
-            phpcs -n --standard=$STANDARD $TMP_DIR/$file
+            phpcs --report=summary --standard=$STANDARD $TMP_DIR/$file
         done
     fi
 done
