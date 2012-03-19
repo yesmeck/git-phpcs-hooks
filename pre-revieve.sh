@@ -10,6 +10,7 @@ while read oldrev newrev ref
 do
     # 当push新分支的时候oldrev会不存在，删除时newrev就不存在
     if [[ $oldrev != $EMPTY_REF && $newrev != $EMPTY_REF ]]; then
+        echo 'CodeSniffer check result:'
         # 找出哪些文件被更新了
         for file in $(git diff-tree -r $oldrev..$newrev | awk '{print $6}')
         do
@@ -26,7 +27,12 @@ do
                 STANDARD='Closure_Linter'
             fi
 
-            phpcs --report=summary --standard=$STANDARD $TMP_DIR/$file
+            output=$(phpcs --report=summary --standard=$STANDARD $TMP_DIR/$file)
+
+            warning=$(echo $output | grep -oP '([0-9]+) WARNING' | grep -oP '[0-9]+')
+            error=$(echo $output | grep -oP '([0-9]+) ERROR' | grep -oP '[0-9]+')
+
+            echo "    /${file}: ${error} errors, ${warning} warnings"
         done
     fi
 done
@@ -34,4 +40,4 @@ done
 # 删除临时目录
 rm -rf $TMP_DIR
 
-exit 0
+exit 1
