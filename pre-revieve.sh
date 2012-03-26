@@ -46,7 +46,7 @@ do
             error=$(echo $output | grep -oP '([0-9]+) ERROR' | grep -oP '[0-9]+')
 
             if [[ $warning || $error ]]; then
-                echo -en "    ${file}: "
+                echo -n "    ${file}: "
                 echo -en "\033[1;33m${error}\033[0m \033[33merrors\033[0m, "
                 echo -e "\033[1;31m${warning}\033[0m \033[31mwarnings\033[0m"
             fi
