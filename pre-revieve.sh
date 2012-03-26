@@ -32,7 +32,10 @@ do
             warning=$(echo $output | grep -oP '([0-9]+) WARNING' | grep -oP '[0-9]+')
             error=$(echo $output | grep -oP '([0-9]+) ERROR' | grep -oP '[0-9]+')
 
-            echo "    ${file}: ${error} errors, ${warning} warnings"
+            if [[ $warning || $error ]]; then
+                echo "    ${file}: ${error} errors, ${warning} warnings"
+            fi
+
         done
 
         echo -e "http://testing/project/code-sniffer/reporter\n";
