@@ -12,20 +12,20 @@ do
     if [[ $oldrev != $EMPTY_REF && $newrev != $EMPTY_REF ]]; then
         echo -e '\n\033[35mCodeSniffer check result:\033[0m'
         # 找出哪些文件被更新了
-        for line in $(git diff-tree -r $oldrev..$newrev | awk '{print $5$6}')
+        for line in $(git diff-tree -r $oldrev..$newrev)
         do
             # 文件状态
             # D: deleted
             # A: added
             # M: modified
-            status=$(echo $line | grep -o '^.')
+            status=$(echo $line | awk '{print $5}')
 
             if [[ $status == 'D' ]]; then
                 continue
             fi
 
             # 文件名
-            file=$(echo $line | sed 's/^.//')
+            file=$(echo $line | awk '{print $6}')
 
             # 为文件创建目录
             mkdir -p $(dirname $TMP_DIR/$file)
