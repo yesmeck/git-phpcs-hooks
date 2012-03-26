@@ -10,7 +10,7 @@ while read oldrev newrev ref
 do
     # 当push新分支的时候oldrev会不存在，删除时newrev就不存在
     if [[ $oldrev != $EMPTY_REF && $newrev != $EMPTY_REF ]]; then
-        echo 'CodeSniffer check result:'
+        echo -e '\n\033[35mCodeSniffer check result:\033[0m'
         # 找出哪些文件被更新了
         for file in $(git diff-tree -r $oldrev..$newrev | awk '{print $6}')
         do
@@ -32,12 +32,14 @@ do
             warning=$(echo $output | grep -oP '([0-9]+) WARNING' | grep -oP '[0-9]+')
             error=$(echo $output | grep -oP '([0-9]+) ERROR' | grep -oP '[0-9]+')
 
-            echo "    /${file}: ${error} errors, ${warning} warnings"
+            echo "    ${file}: ${error} errors, ${warning} warnings"
         done
+
+        echo -e "http://testing/project/code-sniffer/reporter\n";
     fi
 done
 
 # 删除临时目录
 rm -rf $TMP_DIR
 
-exit 1
+exit 0
