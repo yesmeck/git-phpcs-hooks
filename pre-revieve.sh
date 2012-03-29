@@ -90,8 +90,7 @@ do
         if [[ $checked_file_count == 0 ]]; then
             echo -e "    ${blue_bold}No file was checked.${color_end}"
         elif [[ $warnings_count == 0 && $errors_count == 0 ]]; then
-            echo -e "    ${green_bold}Congratulations!!!${color_end}"
-            echo -e "    ${green_bold}Neither warnings nor errors were found, take a break, give yourself a cup of tea!!${color_end}"
+            echo -e "${green_bold}$(cowsay 'Congratulations!!!')${color_end}"
         elif [[ $errors_count  == 0 ]]; then
             echo
             echo -e "    ${blue}Good job, no errors were found!!!${color_end}"
@@ -105,4 +104,4 @@ done
 # 删除临时目录
 rm -rf $TMP_DIR
 
-exit 1
+exit 0
