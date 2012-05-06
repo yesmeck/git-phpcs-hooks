@@ -17,6 +17,8 @@ chmod +x hooks/pre-receive
 cd $test_repo
 git init > /dev/null 2>&1
 git remote add origin $test_bare_repo
+cp $current_dir/../hooks/pre-commit .git/hooks
+chmod +x .git/hooks/pre-commit
 
 touch foo
 git add foo
@@ -25,20 +27,23 @@ git push origin master > /dev/null 2>&1
 
 cp $current_dir/$php_file $test_repo
 git add $php_file
-git commit -m 'No warnings and errors' > /dev/null 2>&1
-echo "--------------------First push--------------------"
+echo "--------------------Commit test--------------------"
+git commit -m 'No warnings and errors'
+echo -e "\n--------------------Push test--------------------"
 git push origin master
 
 sed -i 's/#\$f00/\$f00/' $php_file
 git add $php_file
-git commit -m 'Make a warning' > /dev/null 2>&1
-echo -e "\n--------------------Second push--------------------"
+echo -e "\n--------------------Commit test--------------------"
+git commit -m 'Make a warning'
+echo -e "\n--------------------Push test--------------------"
 git push origin master
 
 sed -i 's/powerRangers/power_ranges/' $php_file
 git add $php_file
-git commit -m 'Make a error' > /dev/null 2>&1
-echo -e "\n--------------------Third push--------------------"
+echo -e "\n--------------------Commit test--------------------"
+git commit -m 'Make a error'
+echo -e "\n--------------------Push test--------------------"
 git push origin master
 
 rm $test_bare_repo $test_repo -rf

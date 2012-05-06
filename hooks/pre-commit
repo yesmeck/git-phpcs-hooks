@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+# 是否阻止提交？
+# REJECT_COMMIT=1
+
+# Colors
+PURPLE='\033[35m'
+RED='\033[31m'
+RED_BOLD='\033[1;31m'
+YELLOW='\033[33m'
+YELLOW_BOLD='\033[1;33m'
+GREEN='\033[32m'
+GREEN_BOLD='\033[1;32m'
+BLUE='\033[34m'
+BLUE_BOLD='\033[1;34m'
+COLOR_END='\033[0m'
+
+result=''
+
+for line in $(git diff --cached --name-status | grep -P '.*\.(js|php)' | awk '{print $1$2}');do
+
+    # 文件状态
+    # D: deleted
+    # A: added
+    # M: modified
+    status=$(echo $line | grep -o '^.')
+
+    # 不检查被删除的文件
+    if [[ $status == 'D' ]]; then
+        continue
+    fi
+
+    # 文件名
+    file=$(echo $line | sed 's/^.//')
+
+
+    if [[ $(echo $file | grep -e '.php') ]]; then
+        standard='Zend'
+    fi
+
+    if [[ $(echo $file | grep -e '.js') ]]; then
+        standard='Closure_Linter'
+    fi
+
+    check_result=$(phpcs --report=emacs --standard=$standard $file)
+
+    if [[ $check_result ]]; then
+
+        result="${result}${file}:\n"
+
+        while read -r row; do
+            # 有错的行号
+            line_number=$(echo $row | grep -oP ':[0-9]+:' | grep -oP '[0-9]+')
+            # 错误信息
+            message=$(echo $row | grep -oP '\s.+\s-\s.+');
+            error_type=$(echo $message | sed 's/\s-\s.*$//')
+            error_message=$(echo $message | sed 's/^.*\s-\s//')
+            # 加个颜色
+            if [[ 'error' == $error_type ]]; then
+                error_type=${RED}${error_type}${COLOR_END}
+            else
+                error_type=${YELLOW}${error_type}${COLOR_END}
+            fi
+            # 找出被修改的行号
+            for changed_line in \
+                $(git blame -n $file | grep '^00000000' | awk '{print $2}'); do
+                if [[ $changed_line == $line_number ]]; then
+                    result="${result}    line:${line_number} ${error_type} - ${error_message}\n"
+                    break
+                fi
+            done
+        done < <(echo -e "$check_result")
+    fi
+
+done
+
+if [[ $result ]]; then
+    echo -e "\n${PURPLE}CodeSniffer check result:${COLOR_END}\n"
+    echo -e "$result"
+    if [[ $REJECT_COMMIT ]]; then
+        exit 1
+    fi
+fi
+
+exit 0
