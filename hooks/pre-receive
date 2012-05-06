@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # 创建临时目录
 TMP_DIR=$(mktemp -d)

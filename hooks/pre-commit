@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # 是否阻止提交？
 # REJECT_COMMIT=1
