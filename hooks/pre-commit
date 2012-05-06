@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 # 是否阻止提交？
-# REJECT_COMMIT=1
+# 0 or 1
+REJECT_COMMIT=0
 
 # Colors
 PURPLE='\033[35m'
@@ -77,9 +78,7 @@ done
 if [[ $result ]]; then
     echo -e "\n${PURPLE}CodeSniffer check result:${COLOR_END}\n"
     echo -e "$result"
-    if [[ $REJECT_COMMIT ]]; then
-        exit 1
-    fi
+    exit $REJECT_COMMIT
 fi
 
 exit 0
