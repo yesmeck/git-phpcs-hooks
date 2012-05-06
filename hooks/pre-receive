@@ -53,14 +53,14 @@ do
             git show $newrev:$file > $TMP_DIR/$file
 
             if [[ $(echo $file | grep -e '.php') ]]; then
-                STANDARD='Zend'
+                standard='Zend'
             fi
 
             if [[ $(echo $file | grep -e '.js') ]]; then
-                STANDARD='Closure_Linter'
+                standard='Closure_Linter'
             fi
 
-            output=$(phpcs --report=summary --standard=$STANDARD $TMP_DIR/$file)
+            output=$(phpcs --report=summary --standard=$standard $TMP_DIR/$file)
 
             warning=$(echo $output | grep -oP '([0-9]+) WARNING' | grep -oP '[0-9]+')
             error=$(echo $output | grep -oP '([0-9]+) ERROR' | grep -oP '[0-9]+')
