@@ -49,6 +49,9 @@ for line in $(git diff --cached --name-status | grep -P '.*\.(js|php)' | awk '{p
 
     if [[ $check_result ]]; then
 
+        # 找出被修改的行号
+        changed_lines=$(git blame -n $file | grep '^00000000' | grep -oP '[0-9]+\)' | grep -oP '[0-9]+')
+
         while read -r row; do
             # 有错的行号
             line_number=$(echo $row | grep -oP ':[0-9]+:' | grep -oP '[0-9]+')
@@ -62,14 +65,10 @@ for line in $(git diff --cached --name-status | grep -P '.*\.(js|php)' | awk '{p
             else
                 error_type=${YELLOW}${error_type}${COLOR_END}
             fi
-            # 找出被修改的行号
-            for changed_line in \
-                $(git blame -n $file | grep '^00000000' | grep -oP '[0-9]+\)' | grep -oP '[0-9]+'); do
-                if [[ $changed_line == $line_number ]]; then
-                    this_file_error="${this_file_error}    line:${line_number} ${error_type} - ${error_message}\n"
-                    break
-                fi
-            done
+            if [[ $(echo -e "$changed_lines" | grep "^$line_number$") ]]; then
+                this_file_error="${this_file_error}    line:${line_number} ${error_type} - ${error_message}\n"
+                break
+            fi
         done < <(echo -e "$check_result")
 
         if [[ $this_file_error ]]; then
