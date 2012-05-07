@@ -40,7 +40,7 @@ for line in $(git diff --cached --name-status | grep -P '.*\.(js|php)' | awk '{p
     fi
 
     if [[ $(echo $file | grep -e '.js') ]]; then
-        standard='Closure_Linter'
+        standard='ClosureLinter'
     fi
 
     check_result=$(phpcs --report=emacs --standard=$standard $file)

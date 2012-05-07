@@ -57,7 +57,7 @@ do
             fi
 
             if [[ $(echo $file | grep -e '.js') ]]; then
-                standard='Closure_Linter'
+                standard='ClosureLinter'
             fi
 
             output=$(phpcs --report=summary --standard=$standard $TMP_DIR/$file)
