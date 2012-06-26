@@ -29,20 +29,26 @@ test_pre-commit() {
 
     cp $current_dir/$php_file $test_repo
     git add $php_file
-    echo "--------------------Commit test--------------------"
+    echo "--------------------No warnings and errors--------------------"
     git commit -m 'No warnings and errors'
     git push origin master > /dev/null 2>&1
 
     sed -i 's/#\$f00/\$f00/' $php_file
     git add $php_file
-    echo -e "\n--------------------Commit test--------------------"
+    echo -e "\n--------------------Make a warning--------------------"
     git commit -m 'Make a warning'
     git push origin master > /dev/null 2>&1
 
     sed -i 's/powerRangers/power_ranges/' $php_file
     git add $php_file
-    echo -e "\n--------------------Commit test--------------------"
+    echo -e "\n--------------------Make a error--------------------"
     git commit -m 'Make a error'
+    git push origin master > /dev/null 2>&1
+
+    sed -i 's/#\$f11/\$f11/' $php_file
+    git add $php_file
+    echo -e "\n--------------------Make more warnings--------------------"
+    git commit -m 'Make more warnings'
     git push origin master > /dev/null 2>&1
 
     rm $test_bare_repo $test_repo -rf
@@ -59,8 +65,6 @@ test_pre-receive() {
     cd $test_repo
     git init > /dev/null 2>&1
     git remote add origin $test_bare_repo
-    cp $current_dir/../hooks/pre-commit .git/hooks
-    chmod +x .git/hooks/pre-commit
 
     touch foo
     git add foo
@@ -68,21 +72,22 @@ test_pre-receive() {
     git push origin master > /dev/null 2>&1
 
     cp $current_dir/$php_file $test_repo
+
+    echo "--------------------No warnings and errors--------------------"
     git add $php_file
     git commit -m 'No warnings and errors' > /dev/null 2>&1
-    echo "--------------------Push test--------------------"
     git push origin master
 
+    echo -e "\n--------------------Make a warning-------------------"
     sed -i 's/#\$f00/\$f00/' $php_file
     git add $php_file
     git commit -m 'Make a warning' > /dev/null 2>&1
-    echo -e "\n--------------------Push test--------------------"
     git push origin master
 
+    echo -e "\n--------------------Make a error--------------------"
     sed -i 's/powerRangers/power_ranges/' $php_file
     git add $php_file
     git commit -m 'Make a error' > /dev/null 2>&1
-    echo -e "\n--------------------Push test--------------------"
     git push origin master
 
     rm $test_bare_repo $test_repo -rf

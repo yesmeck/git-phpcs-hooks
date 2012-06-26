@@ -19,6 +19,9 @@ class PowerRangers
         );
 
         #$f00 = null;
+
+        #$f11 = 11;
+        #$f11 = 11;
     }
 
 }

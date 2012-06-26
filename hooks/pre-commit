@@ -2,7 +2,7 @@
 
 # 是否阻止提交？
 # 0 or 1
-REJECT_COMMIT=0
+REJECT_COMMIT=1
 
 # Colors
 PURPLE='\033[35m'
@@ -34,6 +34,10 @@ for line in $(git diff --cached --name-status | grep -P '.*\.(js|php)' | awk '{p
     # 文件名
     file=$(echo $line | sed 's/^.//')
 
+    # 不检查 view 文件
+    if [[ $(echo $file | grep 'view/') ]]; then
+        continue
+    fi
 
     if [[ $(echo $file | grep -e '.php') ]]; then
         standard='Zend'
@@ -67,7 +71,6 @@ for line in $(git diff --cached --name-status | grep -P '.*\.(js|php)' | awk '{p
             fi
             if [[ $(echo -e "$changed_lines" | grep "^$line_number$") ]]; then
                 this_file_error="${this_file_error}    line:${line_number} ${error_type} - ${error_message}\n"
-                break
             fi
         done < <(echo -e "$check_result")
 
